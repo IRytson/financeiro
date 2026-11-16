@@ -202,6 +202,38 @@ h3.sub:first-of-type{margin-top:0}
 .toast.on{opacity:1}
 @media (prefers-reduced-motion:reduce){.sense .ray{animation:none!important}.toast{transition:none}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* telas pequenas */
+@media (max-width:640px){
+  .top{padding:18px 16px;gap:14px}
+  .top .web{width:200px;height:160px}
+  .brand{gap:12px;width:100%}
+  .logo{width:52px;height:52px;border-radius:12px}
+  .brand h1{font-size:36px}
+  .brand p{font-size:13px}
+  .monthnav{width:100%;justify-content:space-between}
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .tiles .tile:first-child{grid-column:1 / 3}
+  .tiles .tile:last-child{grid-column:1 / 3}
+  .tile{padding:14px}
+  .tile .v{font-size:26px}
+  .tiles .tile:first-child .v{font-size:36px}
+  .sense{grid-template-columns:auto minmax(0,1fr);padding:14px;gap:12px}
+  .sense .ico{width:44px;height:44px}
+  .sense h2{font-size:20px}
+  .limit{grid-column:1 / 3}
+  .panel{padding:14px}
+  .flow{gap:6px}
+  .fcol em{font-size:11px}
+  .kv dd.big{font-size:22px}
+}
+@media (max-width:360px){
+  .brand h1{font-size:32px}
+  .tile .v{font-size:22px}
+  .yform{grid-template-columns:1fr}
+  .yform .full{grid-column:auto}
+}
+.fcol em{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -340,6 +372,7 @@ h3.sub:first-of-type{margin-top:0}
   };
   var $=function(s){return document.querySelector(s)};
   var brl=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
+  var cmp=new Intl.NumberFormat('pt-BR',{notation:'compact',maximumFractionDigits:1});
   var mfmt=new Intl.DateTimeFormat('pt-BR',{month:'long',year:'numeric'});
   var dfmt=new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'short'});
   var msh=new Intl.DateTimeFormat('pt-BR',{month:'short'});
@@ -507,7 +540,7 @@ h3.sub:first-of-type{margin-top:0}
     }
     var pts=[];for(var k=0;k<=12;k++){pts.push(c.P*Math.pow(1+c.r,c.m+k))}
     var lo=pts[0],hi=pts[12];if(hi-lo<1){hi=lo+1}
-    var padL=12,padR=12,top=34,bot=34,W=640,H=220,iw=W-padL-padR,ih=H-top-bot;
+    var svg=$('#ychart'),W=Math.max(280,Math.round(svg.getBoundingClientRect().width)||640),H=220,padL=12,padR=12,top=34,bot=34,iw=W-padL-padR,ih=H-top-bot;
     var X=function(i){return padL+iw*i/12},Y=function(v){return top+ih-(v-lo)/(hi-lo)*ih};
     var path=pts.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)}).join(' ');
     var area=path+' L'+X(12).toFixed(1)+' '+(top+ih)+' L'+X(0).toFixed(1)+' '+(top+ih)+' Z';
@@ -517,7 +550,7 @@ h3.sub:first-of-type{margin-top:0}
     s+='<text class="val" x="'+padL+'" y="'+(Y(pts[0])-12).toFixed(1)+'">'+brl.format(pts[0])+'</text>';
     s+='<text class="val" x="'+(W-padR)+'" y="'+(Y(pts[12])-12).toFixed(1)+'" text-anchor="end">'+brl.format(pts[12])+'</text>';
     s+='<text x="'+padL+'" y="'+(H-10)+'">hoje</text><text x="'+X(6)+'" y="'+(H-10)+'" text-anchor="middle">+6 meses</text><text x="'+(W-padR)+'" y="'+(H-10)+'" text-anchor="end">+12 meses</text>';
-    $('#ychart').innerHTML=s;
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.innerHTML=s;
   }
 
   function renderFlow(){
@@ -525,7 +558,7 @@ h3.sub:first-of-type{margin-top:0}
     for(var k=5;k>=0;k--){var d=new Date(view.y,view.m-k,1),s=sums(d.getFullYear(),d.getMonth());cols.push({d:d,i:s.i,o:s.o});max=Math.max(max,s.i,s.o)}
     $('#flow').innerHTML=cols.map(function(c){
       var net=c.i-c.o;
-      return '<div class="fcol"><div class="fbars"><i class="a" style="height:'+(c.i/max*130)+'px" title="Entradas: '+brl.format(c.i)+'"></i><i class="b" style="height:'+(c.o/max*130)+'px" title="Saídas: '+brl.format(c.o)+'"></i></div><small>'+msh.format(c.d).replace('.','')+'</small><em class="num" style="color:'+(net<0?'var(--crit)':'var(--good)')+'">'+(net<0?'−':'+')+' '+brl.format(Math.abs(net)).replace('R$','').trim()+'</em></div>';
+      return '<div class="fcol"><div class="fbars"><i class="a" style="height:'+(c.i/max*130)+'px" title="Entradas: '+brl.format(c.i)+'"></i><i class="b" style="height:'+(c.o/max*130)+'px" title="Saídas: '+brl.format(c.o)+'"></i></div><small>'+msh.format(c.d).replace('.','')+'</small><em class="num" style="color:'+(net<0?'var(--crit)':'var(--good)')+'" title="Saldo do mês: '+brl.format(net)+'">'+(net<0?'−':'+')+cmp.format(Math.abs(net))+'</em></div>';
     }).join('');
   }
 
@@ -643,6 +676,7 @@ h3.sub:first-of-type{margin-top:0}
     save();renderAll();toast('Exemplos removidos. Agora é com você.');
   });
 
+  var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(renderYield,150)});
   syncFilters();renderAll();save();
 })();
 </script>
