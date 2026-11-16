@@ -234,6 +234,47 @@ h3.sub:first-of-type{margin-top:0}
   .yform .full{grid-column:auto}
 }
 .fcol em{white-space:nowrap}
+
+/* Teia Finanças — visual premium */
+:root{
+ --bg:#eef2f8;--surface:#ffffff;--surface-2:#e8eef6;--fg:#172238;--muted:#64748b;--line:#d9e2ef;
+ --hero:#101a35;--hero-fg:#f8fbff;--blue:#263b68;--red:#6558e8;--red-ink:#ffffff;
+ --good:#0b9f88;--warn:#c58a25;--crit:#dc5268;--focus:#6558e8;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1222;--surface:#131e33;--surface-2:#1c2a43;--fg:#edf3ff;--muted:#9aaac2;--line:#293a56;--hero:#101a35;--blue:#eaf0ff;--red:#8b80ff;--red-ink:#10152a;--good:#42d6b3;--warn:#f4bd63;--crit:#ff7188;--focus:#a59cff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1222;--surface:#131e33;--surface-2:#1c2a43;--fg:#edf3ff;--muted:#9aaac2;--line:#293a56;--hero:#101a35;--blue:#eaf0ff;--red:#8b80ff;--red-ink:#10152a;--good:#42d6b3;--warn:#f4bd63;--crit:#ff7188;--focus:#a59cff;color-scheme:dark}
+body{background:radial-gradient(ellipse at 8% 0%,rgba(101,88,232,.10),transparent 34%),var(--bg)}
+.wrap{gap:22px}
+.top,.panel,.tile,.sense{border-radius:18px;box-shadow:0 8px 28px rgba(20,35,65,.055)}
+.top{background:linear-gradient(125deg,#101a35 0%,#263b68 68%,#5148a8 100%);padding:26px}
+.top .web{opacity:.18}
+.logo{border-radius:16px;box-shadow:0 0 0 1px rgba(255,255,255,.25),0 8px 24px rgba(0,0,0,.2)}
+.brand h1{font-size:48px;letter-spacing:.01em}
+.brand h1 span{background:transparent;color:#7ee7d1;padding:0}
+.tile,.panel,.sense{border-color:var(--line)}
+.tile{transition:transform .18s ease,box-shadow .18s ease}
+.tile:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(30,50,90,.09)}
+.btn,.chip,input[type=text],input[type=number],input[type=date],input[type=search],select{border-radius:12px}
+.btn.primary{background:linear-gradient(120deg,#6558e8,#3f82dc);border:0;box-shadow:0 6px 16px rgba(101,88,232,.2)}
+.chip[aria-pressed=true],.seg input:checked+label{background:var(--blue);border-color:var(--blue);color:var(--surface)}
+.mi{border-radius:12px}
+.bar{height:11px}
+.fixed-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:18px}
+.fixed-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.fixed-stat{background:var(--surface-2);border-radius:14px;padding:14px}
+.fixed-stat small{display:block;color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.fixed-stat strong{display:block;font:700 25px var(--f-display);margin-top:4px}
+.fixed-list{list-style:none;margin:0;padding:0}
+.fixed-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;padding:12px 0;border-top:1px solid var(--line)}
+.fixed-item:first-child{border-top:0}
+.fixed-item small{display:block;color:var(--muted)}
+.fixed-item .fixed-value{font:700 19px var(--f-display);white-space:nowrap}
+.fixed-form{display:flex;flex-direction:column;gap:11px;background:var(--surface-2);padding:15px;border-radius:14px}
+.fixed-form .two{gap:10px}
+.cdi-pill{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:5px 10px;background:rgba(11,159,136,.12);color:var(--good);font-size:12px;font-weight:700}
+.cdi-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(max-width:760px){.fixed-grid{grid-template-columns:1fr}.fixed-form{order:-1}}
+@media(max-width:420px){.fixed-summary{grid-template-columns:1fr 1fr}.cdi-fields{grid-template-columns:1fr}.brand h1{font-size:38px}}
 </style>
 </head>
 <body>
@@ -325,16 +366,42 @@ h3.sub:first-of-type{margin-top:0}
     </section>
   </div>
 
+
+  <section class="panel" aria-labelledby="hFixed">
+    <div class="panel-h"><h2 id="hFixed">Gastos fixos</h2><span>Despesas que se repetem todo mês</span></div>
+    <div class="fixed-grid">
+      <div>
+        <div class="fixed-summary">
+          <div class="fixed-stat"><small>Total mensal</small><strong id="fixedTotal">R$ 0,00</strong></div>
+          <div class="fixed-stat"><small>Da renda comprometida</small><strong id="fixedPercent">0%</strong></div>
+        </div>
+        <ul class="fixed-list" id="fixedList"><li class="empty">Nenhum gasto fixo cadastrado.</li></ul>
+      </div>
+      <form class="fixed-form" id="fixedForm" novalidate>
+        <strong>Novo gasto fixo</strong>
+        <div class="field"><label for="fixedName">Descrição</label><input id="fixedName" type="text" placeholder="Ex.: Internet, aluguel"></div>
+        <div class="two">
+          <div class="field"><label for="fixedAmount">Valor (R$)</label><input id="fixedAmount" type="text" inputmode="decimal" placeholder="0,00"></div>
+          <div class="field"><label for="fixedDue">Vencimento (dia)</label><input id="fixedDue" type="number" min="1" max="31" placeholder="10"></div>
+        </div>
+        <div class="field"><label for="fixedCat">Categoria</label><select id="fixedCat"><option>Moradia</option><option>Contas</option><option>Assinaturas</option><option>Transporte</option><option>Educação</option><option>Outros</option></select></div>
+        <button class="btn primary" type="submit">Adicionar gasto fixo</button>
+      </form>
+    </div>
+  </section>
+
   <section class="panel" aria-labelledby="hYield">
-    <div class="panel-h"><h2 id="hYield">Rendimento</h2><span id="yNote">Simulação com taxa mensal fixa, sem imposto.</span></div>
+    <div class="panel-h"><h2 id="hYield">Investimentos · CDI</h2><span class="cdi-pill">Simulador de rendimento</span></div>
+    <p class="hint" style="margin:-4px 0 14px">Informe a taxa anual do CDI usada como referência e quanto do CDI seu investimento paga. A projeção é estimada, sem descontar impostos e taxas.</p>
     <div class="yield">
       <div>
         <dl class="kv" id="ykv"></dl>
         <form id="yform" class="yform" novalidate>
           <div class="field"><label for="yP">Valor investido (R$)</label><input type="text" id="yP" inputmode="decimal"></div>
-          <div class="field"><label for="yR">Taxa ao mês (%)</label><input type="text" id="yR" inputmode="decimal"></div>
+          <div class="field"><label for="yR">% do CDI</label><input type="text" id="yR" inputmode="decimal" placeholder="100"></div>
+          <div class="field"><label for="yCDI">CDI anual de referência (%)</label><input type="text" id="yCDI" inputmode="decimal" placeholder="Informe a taxa"></div>
           <div class="field full"><label for="yS">Investido desde</label><input type="date" id="yS"></div>
-          <button type="submit" class="btn full">Atualizar investimento</button>
+          <button type="submit" class="btn full">Atualizar simulação CDI</button>
         </form>
       </div>
       <div>
@@ -424,6 +491,9 @@ h3.sub:first-of-type{margin-top:0}
   }
   function load(){try{var r=localStorage.getItem(KEY);if(r){var s=JSON.parse(r);if(s&&s.tx)return s}}catch(e){}return seed()}
   var state=load();
+  state.fixedExpenses=Array.isArray(state.fixedExpenses)?state.fixedExpenses:[];
+  state.invest=Object.assign({principal:0,rate:100,cdi:0,start:iso(today)},state.invest||{});
+  if(state.invest.cdi===undefined){state.invest.cdi=(Number(state.invest.rate)||0)*12;state.invest.rate=100;}
   var persistOk=true;
   function save(){try{localStorage.setItem(KEY,JSON.stringify(state));persistOk=true}catch(e){if(persistOk){toast('Não deu para salvar neste navegador. Seus dados valem só até fechar a página.')}persistOk=false}}
 
@@ -458,10 +528,12 @@ h3.sub:first-of-type{margin-top:0}
 
   /* investment */
   function invCalc(){
-    var iv=state.invest,P=iv.principal||0,r=(iv.rate||0)/100;
+    var iv=state.invest,P=iv.principal||0,pct=iv.rate||0,cdi=iv.cdi||0;
+    var annual=(cdi*pct/100)/100;
+    var r=Math.pow(1+annual,1/12)-1;
     var m=Math.max(0,(today-pd(iv.start))/(30.4375*864e5));
     var bal=P*Math.pow(1+r,m);
-    return {P:P,r:r,m:m,bal:bal,gain:bal-P,month:P*Math.pow(1+r,Math.floor(m))*r};
+    return {P:P,r:r,m:m,bal:bal,gain:bal-P,month:P*Math.pow(1+r,Math.floor(m))*r,annual:annual*100,pct:pct,cdi:cdi};
   }
 
   function renderTiles(){
@@ -534,9 +606,9 @@ h3.sub:first-of-type{margin-top:0}
 
   function renderYield(){
     var c=invCalc(),iv=state.invest;
-    $('#ykv').innerHTML='<dt>Saldo investido hoje</dt><dd class="big num">'+brl.format(c.bal)+'</dd><dt>Valor aplicado</dt><dd class="num">'+brl.format(c.P)+'</dd><dt>Rendeu até hoje</dt><dd class="num">'+brl.format(c.gain)+'</dd><dt>Rendimento neste mês</dt><dd class="num">'+brl.format(c.month)+'</dd><dt>Taxa</dt><dd class="num">'+String(iv.rate).replace('.',',')+'% ao mês</dd>';
-    if(document.activeElement.id!=='yP'&&document.activeElement.id!=='yR'&&document.activeElement.id!=='yS'){
-      $('#yP').value=String(iv.principal).replace('.',',');$('#yR').value=String(iv.rate).replace('.',',');$('#yS').value=iv.start;
+    $('#ykv').innerHTML='<dt>Saldo estimado hoje</dt><dd class="big num">'+brl.format(c.bal)+'</dd><dt>Valor aplicado</dt><dd class="num">'+brl.format(c.P)+'</dd><dt>Rendimento acumulado</dt><dd class="num">'+brl.format(c.gain)+'</dd><dt>Rendimento estimado no mês</dt><dd class="num">'+brl.format(c.month)+'</dd><dt>Percentual do CDI</dt><dd class="num">'+String(c.pct).replace('.',',')+'%</dd><dt>Taxa anual equivalente</dt><dd class="num">'+String(c.annual.toFixed(2)).replace('.',',')+'%</dd>';
+    if(document.activeElement.id!=='yP'&&document.activeElement.id!=='yR'&&document.activeElement.id!=='yS'&&document.activeElement.id!=='yCDI'){
+      $('#yP').value=String(iv.principal).replace('.',',');$('#yR').value=String(iv.rate).replace('.',',');$('#yCDI').value=String(iv.cdi||'').replace('.',',');$('#yS').value=iv.start;
     }
     var pts=[];for(var k=0;k<=12;k++){pts.push(c.P*Math.pow(1+c.r,c.m+k))}
     var lo=pts[0],hi=pts[12];if(hi-lo<1){hi=lo+1}
@@ -564,7 +636,7 @@ h3.sub:first-of-type{margin-top:0}
 
   function renderMonth(){$('#monthLabel').textContent=mfmt.format(new Date(view.y,view.m,1))}
   function renderDemo(){$('#demo').hidden=!state.demo}
-  function renderAll(){renderMonth();renderDemo();renderTiles();renderSense();renderList();renderBreak();renderYield();renderFlow()}
+  function renderAll(){renderMonth();renderDemo();renderTiles();renderSense();renderList();renderBreak();renderFixed();renderYield();renderFlow()}
 
   function syncFilters(){
     document.querySelectorAll('#filters .chip[data-m]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.m===F.m))});
@@ -662,17 +734,43 @@ h3.sub:first-of-type{margin-top:0}
   $('#prev').addEventListener('click',function(){var d=new Date(view.y,view.m-1,1);view={y:d.getFullYear(),m:d.getMonth()};renderAll()});
   $('#next').addEventListener('click',function(){var d=new Date(view.y,view.m+1,1);view={y:d.getFullYear(),m:d.getMonth()};renderAll()});
 
+
+  function renderFixed(){
+    var list=$('#fixedList'),items=state.fixedExpenses||[];
+    var total=items.reduce(function(a,x){return a+(Number(x.amount)||0)},0);
+    var income=sums(view.y,view.m).i,pct=income>0?total/income*100:0;
+    $('#fixedTotal').textContent=brl.format(total);
+    $('#fixedPercent').textContent=pct.toFixed(1).replace('.',',')+'%';
+    if(!items.length){list.innerHTML='<li class="empty">Nenhum gasto fixo cadastrado. Adicione aluguel, internet, assinaturas e outras despesas recorrentes.</li>';return}
+    list.innerHTML=items.map(function(x){
+      return '<li class="fixed-item"><div><strong>'+esc(x.name)+'</strong><small>'+esc(x.category)+' · vence dia '+esc(x.due||'—')+'</small></div><div style="text-align:right"><div class="fixed-value">'+brl.format(x.amount)+'</div><button class="btn small danger" type="button" data-fixed-del="'+x.id+'">Remover</button></div></li>';
+    }).join('');
+  }
+  $('#fixedForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var name=$('#fixedName').value.trim(),amount=num($('#fixedAmount').value),due=parseInt($('#fixedDue').value,10);
+    if(!name||isNaN(amount)||amount<=0){toast('Informe uma descrição e um valor válido.');return}
+    if($('#fixedDue').value&&(isNaN(due)||due<1||due>31)){toast('O vencimento deve ser entre 1 e 31.');return}
+    state.fixedExpenses.push({id:nid(),name:name,amount:Math.round(amount*100)/100,due:due||'',category:$('#fixedCat').value});
+    save();this.reset();renderFixed();toast('Gasto fixo adicionado');
+  });
+  $('#fixedList').addEventListener('click',function(e){
+    var b=e.target.closest('[data-fixed-del]');if(!b)return;
+    state.fixedExpenses=state.fixedExpenses.filter(function(x){return x.id!==b.dataset.fixedDel});
+    save();renderFixed();toast('Gasto fixo removido');
+  });
+
   /* yield form */
   $('#yform').addEventListener('submit',function(e){
     e.preventDefault();
-    var p=num($('#yP').value),r=num($('#yR').value),s=$('#yS').value;
-    if(isNaN(p)||p<0||isNaN(r)||r<0||!s){toast('Confira valor, taxa e data de início do investimento.');return}
-    state.invest={principal:p,rate:r,start:s};save();renderAll();toast('Investimento atualizado');
+    var p=num($('#yP').value),r=num($('#yR').value),cdi=num($('#yCDI').value),s=$('#yS').value;
+    if(isNaN(p)||p<0||isNaN(r)||r<0||isNaN(cdi)||cdi<0||!s){toast('Confira valor, percentual do CDI, taxa anual e data.');return}
+    state.invest={principal:p,rate:r,cdi:cdi,start:s};save();renderAll();toast('Simulação CDI atualizada');
   });
 
   $('#clearDemo').addEventListener('click',function(){
     state.tx=state.tx.filter(function(t){return !t.ex});
-    state.demo=false;state.budget=0;state.invest={principal:0,rate:0.9,start:iso(today)};
+    state.demo=false;state.budget=0;state.invest={principal:0,rate:100,cdi:0,start:iso(today)};
     save();renderAll();toast('Exemplos removidos. Agora é com você.');
   });
 
