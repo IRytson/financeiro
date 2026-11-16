@@ -290,7 +290,24 @@ input[type="date"]{
 @media(max-width:600px){
   input[type="date"]{max-width:100%;font-size:13px}
 }
-</style>
+
+/* Anotações e lembretes */
+.notes-grid{display:grid;grid-template-columns:minmax(250px,.85fr) minmax(0,1.15fr);gap:20px;align-items:start}
+.notes-form{display:flex;flex-direction:column;gap:11px;background:var(--surface-2);padding:15px;border-radius:10px}
+.notes-form textarea{width:100%;min-height:110px;resize:vertical;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);font:inherit}
+.notes-divider{height:1px;background:var(--line);margin:7px 0}
+.notes-content{display:flex;flex-direction:column;gap:18px;min-width:0}
+.notes-block{min-width:0}
+.saved-notes{list-style:none;margin:0;padding:0}
+.saved-note{padding:12px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.saved-note:first-child{border-top:0}
+.saved-note strong{display:block;overflow-wrap:anywhere}
+.saved-note p,.saved-note small{display:block;color:var(--muted);margin-top:3px;white-space:pre-wrap;overflow-wrap:anywhere}
+.saved-note.done strong{text-decoration:line-through;color:var(--muted)}
+.saved-note-actions{display:flex;gap:6px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+.saved-note-actions .btn{min-height:30px;padding:4px 8px;font-size:12px}
+@media(max-width:760px){.notes-grid{grid-template-columns:1fr}}
+\n.notes-subform{display:flex;flex-direction:column;gap:11px;min-width:0}\n</style>
 </head>
 <body>
 
@@ -405,7 +422,36 @@ input[type="date"]{
     </div>
   </section>
 
-  <section class="panel" aria-labelledby="hYield">
+  
+  <section class="panel" aria-labelledby="hNotes">
+    <div class="panel-h"><h2 id="hNotes">Anotações e lembretes</h2><span>Ideias, compromissos e coisas para não esquecer</span></div>
+    <div class="notes-grid">
+      <div class="notes-form">
+        <form id="noteForm" class="notes-subform">
+          <strong>Nova anotação</strong>
+          <div class="field"><label for="noteTitle">Título</label><input id="noteTitle" type="text" maxlength="90" placeholder="Ex.: Planejamento do mês"></div>
+          <div class="field"><label for="noteBody">Anotação</label><textarea id="noteBody" rows="4" maxlength="1500" placeholder="Escreva aqui..."></textarea></div>
+          <button class="btn primary" type="submit">Salvar anotação</button>
+        </form>
+        <div class="notes-divider"></div>
+        <form id="reminderForm" class="notes-subform">
+          <strong>Novo lembrete</strong>
+          <div class="field"><label for="reminderTitle">O que lembrar?</label><input id="reminderTitle" type="text" maxlength="120" placeholder="Ex.: Pagar conta de internet"></div>
+          <div class="two">
+            <div class="field"><label for="reminderDate">Data</label><input id="reminderDate" type="date"></div>
+            <div class="field"><label for="reminderTime">Horário (opcional)</label><input id="reminderTime" type="time"></div>
+          </div>
+          <button class="btn primary" type="submit">Adicionar lembrete</button>
+        </form>
+      </div>
+      <div class="notes-content">
+        <div class="notes-block"><div class="panel-h"><strong>Anotações salvas</strong><span id="noteCount">0</span></div><ul class="saved-notes" id="notesList"><li class="empty">Nenhuma anotação ainda.</li></ul></div>
+        <div class="notes-block"><div class="panel-h"><strong>Seus lembretes</strong><span id="reminderCount">0</span></div><ul class="saved-notes" id="remindersList"><li class="empty">Nenhum lembrete ainda.</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+<section class="panel" aria-labelledby="hYield">
     <div class="panel-h"><h2 id="hYield">Investimentos · CDI</h2><span class="cdi-pill">Simulador de rendimento</span></div>
     <p class="hint" style="margin:-4px 0 14px">Informe a taxa anual do CDI usada como referência e quanto do CDI seu investimento paga. A projeção é estimada, sem descontar impostos e taxas.</p>
     <div class="yield">
@@ -507,6 +553,8 @@ input[type="date"]{
   function load(){try{var r=localStorage.getItem(KEY);if(r){var s=JSON.parse(r);if(s&&s.tx)return s}}catch(e){}return seed()}
   var state=load();
   state.fixedExpenses=Array.isArray(state.fixedExpenses)?state.fixedExpenses:[];
+  state.notes=Array.isArray(state.notes)?state.notes:[];
+  state.reminders=Array.isArray(state.reminders)?state.reminders:[];
   state.invest=Object.assign({principal:0,rate:100,cdi:0,start:iso(today)},state.invest||{});
   if(state.invest.cdi===undefined){state.invest.cdi=(Number(state.invest.rate)||0)*12;state.invest.rate=100;}
   var persistOk=true;
@@ -651,7 +699,45 @@ input[type="date"]{
 
   function renderMonth(){$('#monthLabel').textContent=mfmt.format(new Date(view.y,view.m,1))}
   function renderDemo(){$('#demo').hidden=!state.demo}
-  function renderAll(){renderMonth();renderDemo();renderTiles();renderSense();renderList();renderBreak();renderFixed();renderYield();renderFlow()}
+
+  function renderNotes(){
+    var notes=state.notes||[], reminders=state.reminders||[];
+    $('#noteCount').textContent=notes.length;
+    $('#reminderCount').textContent=reminders.filter(function(r){return !r.done}).length+' pendentes';
+    $('#notesList').innerHTML=notes.length?notes.slice().sort(function(a,b){return b.created-a.created}).map(function(n){
+      return '<li class="saved-note"><div><strong>'+esc(n.title||'Sem título')+'</strong><p>'+esc(n.body||'')+'</p><small>'+new Date(n.created).toLocaleDateString('pt-BR')+'</small></div><div class="saved-note-actions"><button type="button" class="btn small danger" data-note-del="'+n.id+'">Excluir</button></div></li>';
+    }).join(''):'<li class="empty">Nenhuma anotação ainda.</li>';
+    $('#remindersList').innerHTML=reminders.length?reminders.slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'')}).map(function(r){
+      var d=r.date?new Date(r.date+'T00:00:00').toLocaleDateString('pt-BR'):'Sem data';
+      return '<li class="saved-note '+(r.done?'done':'')+'"><div><strong>'+esc(r.title)+'</strong><small>'+d+(r.time?' · '+esc(r.time):'')+'</small></div><div class="saved-note-actions"><button type="button" class="btn small" data-rem-done="'+r.id+'">'+(r.done?'Reabrir':'Concluir')+'</button><button type="button" class="btn small danger" data-rem-del="'+r.id+'">Excluir</button></div></li>';
+    }).join(''):'<li class="empty">Nenhum lembrete ainda.</li>';
+  }
+  $('#noteForm').addEventListener('submit',function(e){
+    if(e.target.tagName==='FORM')e.preventDefault();
+    var title=$('#noteTitle').value.trim(),body=$('#noteBody').value.trim();
+    if(!title&&!body){toast('Escreva um título ou o conteúdo da anotação.');return}
+    state.notes.push({id:nid(),title:title||'Anotação',body:body,created:Date.now()});
+    save();$('#noteTitle').value='';$('#noteBody').value='';renderNotes();toast('Anotação salva');
+  });
+  $('#reminderForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var title=$('#reminderTitle').value.trim(),date=$('#reminderDate').value,time=$('#reminderTime').value;
+    if(!title){toast('Escreva o que você deseja lembrar.');return}
+    state.reminders.push({id:nid(),title:title,date:date,time:time,done:false});
+    save();$('#reminderTitle').value='';$('#reminderDate').value='';$('#reminderTime').value='';renderNotes();toast('Lembrete adicionado');
+  });
+  $('#notesList').addEventListener('click',function(e){
+    var b=e.target.closest('[data-note-del]');if(!b)return;
+    state.notes=state.notes.filter(function(n){return n.id!==b.dataset.noteDel});save();renderNotes();toast('Anotação excluída');
+  });
+  $('#remindersList').addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b)return;
+    if(b.dataset.remDone){var r=state.reminders.find(function(x){return x.id===b.dataset.remDone});if(r)r.done=!r.done}
+    if(b.dataset.remDel)state.reminders=state.reminders.filter(function(x){return x.id!==b.dataset.remDel});
+    save();renderNotes();
+  });
+
+  function renderAll(){renderMonth();renderDemo();renderTiles();renderSense();renderList();renderBreak();renderFixed();renderNotes();renderYield();renderFlow()}
 
   function syncFilters(){
     document.querySelectorAll('#filters .chip[data-m]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.m===F.m))});
