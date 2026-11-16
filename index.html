@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Teia">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="theme-color" content="#141217">
+<meta name="theme-color" content="#242321">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <link rel="icon" type="image/png" href="favicon-32.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -235,33 +235,34 @@ h3.sub:first-of-type{margin-top:0}
 }
 .fcol em{white-space:nowrap}
 
-/* Teia Finanças — visual premium */
+/* Teia Finanças — identidade sóbria e editorial */
 :root{
- --bg:#eef2f8;--surface:#ffffff;--surface-2:#e8eef6;--fg:#172238;--muted:#64748b;--line:#d9e2ef;
- --hero:#101a35;--hero-fg:#f8fbff;--blue:#263b68;--red:#6558e8;--red-ink:#ffffff;
- --good:#0b9f88;--warn:#c58a25;--crit:#dc5268;--focus:#6558e8;
+ --bg:#f2f0eb;--surface:#fffefa;--surface-2:#e9e6df;--fg:#292824;--muted:#77736b;--line:#dcd7ce;
+ --hero:#242321;--hero-fg:#fffefa;--blue:#393733;--red:#b94f45;--red-ink:#ffffff;
+ --good:#527b63;--warn:#a77b43;--crit:#b94f45;--focus:#b94f45;
 }
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1222;--surface:#131e33;--surface-2:#1c2a43;--fg:#edf3ff;--muted:#9aaac2;--line:#293a56;--hero:#101a35;--blue:#eaf0ff;--red:#8b80ff;--red-ink:#10152a;--good:#42d6b3;--warn:#f4bd63;--crit:#ff7188;--focus:#a59cff;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0b1222;--surface:#131e33;--surface-2:#1c2a43;--fg:#edf3ff;--muted:#9aaac2;--line:#293a56;--hero:#101a35;--blue:#eaf0ff;--red:#8b80ff;--red-ink:#10152a;--good:#42d6b3;--warn:#f4bd63;--crit:#ff7188;--focus:#a59cff;color-scheme:dark}
-body{background:radial-gradient(ellipse at 8% 0%,rgba(101,88,232,.10),transparent 34%),var(--bg)}
-.wrap{gap:22px}
-.top,.panel,.tile,.sense{border-radius:18px;box-shadow:0 8px 28px rgba(20,35,65,.055)}
-.top{background:linear-gradient(125deg,#101a35 0%,#263b68 68%,#5148a8 100%);padding:26px}
-.top .web{opacity:.18}
-.logo{border-radius:16px;box-shadow:0 0 0 1px rgba(255,255,255,.25),0 8px 24px rgba(0,0,0,.2)}
-.brand h1{font-size:48px;letter-spacing:.01em}
-.brand h1 span{background:transparent;color:#7ee7d1;padding:0}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#191917;--surface:#242320;--surface-2:#302e29;--fg:#f0eee8;--muted:#aaa59b;--line:#403d36;--hero:#242321;--blue:#e9e5dc;--red:#d47769;--red-ink:#211b19;--good:#83aa8d;--warn:#d0a66b;--crit:#e07b70;--focus:#d47769;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#191917;--surface:#242320;--surface-2:#302e29;--fg:#f0eee8;--muted:#aaa59b;--line:#403d36;--hero:#242321;--blue:#e9e5dc;--red:#d47769;--red-ink:#211b19;--good:#83aa8d;--warn:#d0a66b;--crit:#e07b70;--focus:#d47769;color-scheme:dark}
+body{background:var(--bg)}
+.wrap{gap:20px}
+.top,.panel,.tile,.sense{border-radius:12px;box-shadow:0 2px 10px rgba(35,32,26,.045)}
+.top{background:var(--hero);padding:24px}
+.top .web{opacity:.12}
+.logo{border-radius:12px;box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+.brand h1{font-size:46px;letter-spacing:.01em}
+.brand h1 span{background:transparent;color:var(--red);padding:0}
 .tile,.panel,.sense{border-color:var(--line)}
-.tile{transition:transform .18s ease,box-shadow .18s ease}
-.tile:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(30,50,90,.09)}
-.btn,.chip,input[type=text],input[type=number],input[type=date],input[type=search],select{border-radius:12px}
-.btn.primary{background:linear-gradient(120deg,#6558e8,#3f82dc);border:0;box-shadow:0 6px 16px rgba(101,88,232,.2)}
+.tile{transition:border-color .15s ease,box-shadow .15s ease}
+.tile:hover{border-color:#bdb5a8;box-shadow:0 5px 16px rgba(35,32,26,.07)}
+.btn,.chip,input[type=text],input[type=number],input[type=date],input[type=search],select{border-radius:8px}
+.btn.primary{background:var(--red);border:1px solid var(--red);box-shadow:none}
+.btn.primary:hover{filter:brightness(1.06)}
 .chip[aria-pressed=true],.seg input:checked+label{background:var(--blue);border-color:var(--blue);color:var(--surface)}
-.mi{border-radius:12px}
-.bar{height:11px}
+.mi{border-radius:9px}
+.bar{height:9px}
 .fixed-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:18px}
 .fixed-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}
-.fixed-stat{background:var(--surface-2);border-radius:14px;padding:14px}
+.fixed-stat{background:var(--surface-2);border-radius:10px;padding:14px}
 .fixed-stat small{display:block;color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
 .fixed-stat strong{display:block;font:700 25px var(--f-display);margin-top:4px}
 .fixed-list{list-style:none;margin:0;padding:0}
@@ -269,12 +270,26 @@ body{background:radial-gradient(ellipse at 8% 0%,rgba(101,88,232,.10),transparen
 .fixed-item:first-child{border-top:0}
 .fixed-item small{display:block;color:var(--muted)}
 .fixed-item .fixed-value{font:700 19px var(--f-display);white-space:nowrap}
-.fixed-form{display:flex;flex-direction:column;gap:11px;background:var(--surface-2);padding:15px;border-radius:14px}
+.fixed-form{display:flex;flex-direction:column;gap:11px;background:var(--surface-2);padding:15px;border-radius:10px}
 .fixed-form .two{gap:10px}
-.cdi-pill{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:5px 10px;background:rgba(11,159,136,.12);color:var(--good);font-size:12px;font-weight:700}
+.cdi-pill{display:inline-flex;align-items:center;gap:6px;border-radius:5px;padding:5px 9px;background:rgba(82,123,99,.12);color:var(--good);font-size:12px;font-weight:700}
 .cdi-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media(max-width:760px){.fixed-grid{grid-template-columns:1fr}.fixed-form{order:-1}}
 @media(max-width:420px){.fixed-summary{grid-template-columns:1fr 1fr}.cdi-fields{grid-template-columns:1fr}.brand h1{font-size:38px}}
+
+/* Campos de data mais compactos */
+input[type="date"]{
+  width:100%;
+  min-width:0;
+  max-width:190px;
+  min-height:38px;
+  padding:6px 9px;
+  font-size:13px;
+  line-height:1.2;
+}
+@media(max-width:600px){
+  input[type="date"]{max-width:100%;font-size:13px}
+}
 </style>
 </head>
 <body>
