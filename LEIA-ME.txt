@@ -1,0 +1,22 @@
+TEIA FINANÇAS - app instalável no iPhone
+
+Conteúdo da pasta
+- index.html            o app
+- manifest.webmanifest  nome, cores e ícones do app
+- sw.js                 faz o app abrir mesmo sem internet
+- icon-180.png          ícone da tela de início do iPhone
+- icon-192.png / icon-512.png / favicon-32.png   demais ícones
+- logo-teia-completa.png (fundo claro) e logo-teia-transparente.png   sua logo inteira, com o nome
+
+Como instalar no iPhone
+1. Coloque esta pasta em um site com endereço https (Vercel, Netlify, GitHub Pages ou Cloudflare Pages, todos têm plano grátis).
+   O iPhone só instala o app, com ícone próprio e tela cheia, a partir de um endereço https.
+2. Abra o endereço no Safari do iPhone.
+3. Toque no botão Compartilhar (quadrado com seta para cima).
+4. Toque em "Adicionar à Tela de Início" e depois em "Adicionar".
+
+Observações
+- Os lançamentos ficam salvos só no aparelho em que você usa o app. Não há sincronização entre iPhone e computador.
+- Se você apagar os dados do Safari, os lançamentos e comprovantes somem.
+- Os comprovantes são imagens reduzidas e guardadas no próprio aparelho. Muitas imagens podem encher o espaço que o navegador reserva.
+- O app não lê o valor do comprovante automaticamente.
