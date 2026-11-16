@@ -451,25 +451,19 @@ input[type="date"]{
     </div>
   </section>
 
-<section class="panel" aria-labelledby="hYield">
-    <div class="panel-h"><h2 id="hYield">Investimentos · CDI</h2><span class="cdi-pill">Simulador de rendimento</span></div>
-    <p class="hint" style="margin:-4px 0 14px">Informe a taxa anual do CDI usada como referência e quanto do CDI seu investimento paga. A projeção é estimada, sem descontar impostos e taxas.</p>
-    <div class="yield">
-      <div>
-        <dl class="kv" id="ykv"></dl>
-        <form id="yform" class="yform" novalidate>
-          <div class="field"><label for="yP">Valor investido (R$)</label><input type="text" id="yP" inputmode="decimal"></div>
-          <div class="field"><label for="yR">% do CDI</label><input type="text" id="yR" inputmode="decimal" placeholder="100"></div>
-          <div class="field"><label for="yCDI">CDI anual de referência (%)</label><input type="text" id="yCDI" inputmode="decimal" placeholder="Informe a taxa"></div>
-          <div class="field full"><label for="yS">Investido desde</label><input type="date" id="yS"></div>
-          <button type="submit" class="btn full">Atualizar simulação CDI</button>
-        </form>
-      </div>
-      <div>
-        <h3 class="sub" style="margin-top:0">Projeção para os próximos 12 meses</h3>
-        <svg class="chart" id="ychart" viewBox="0 0 640 220" role="img" aria-label="Projeção do saldo investido"></svg>
-      </div>
+<section class="panel" aria-labelledby="hSalary">
+    <div class="panel-h"><h2 id="hSalary">Meu salário</h2><span>Planejamento da renda mensal</span></div>
+    <div class="fixed-summary">
+      <div class="fixed-stat"><small>Salário mensal</small><strong id="salaryDisplay">R$ 0,00</strong></div>
+      <div class="fixed-stat"><small>Disponível após gastos fixos</small><strong id="salaryAvailable">R$ 0,00</strong></div>
+      <div class="fixed-stat"><small>Comprometido com gastos fixos</small><strong id="salaryCommitted">0%</strong></div>
+      <div class="fixed-stat"><small>Gastos fixos no mês</small><strong id="salaryFixedTotal">R$ 0,00</strong></div>
     </div>
+    <form id="salaryForm" class="yform" novalidate>
+      <div class="field"><label for="salaryAmount">Informe seu salário mensal (R$)</label><input type="text" id="salaryAmount" inputmode="decimal" placeholder="0,00"></div>
+      <button type="submit" class="btn primary">Salvar salário</button>
+    </form>
+    <p class="hint" style="margin-top:10px">O percentual é calculado com base na soma dos gastos fixos cadastrados em relação ao salário informado.</p>
   </section>
 
   <section class="panel" aria-labelledby="hFlow">
@@ -553,10 +547,10 @@ input[type="date"]{
   function load(){try{var r=localStorage.getItem(KEY);if(r){var s=JSON.parse(r);if(s&&s.tx)return s}}catch(e){}return seed()}
   var state=load();
   state.fixedExpenses=Array.isArray(state.fixedExpenses)?state.fixedExpenses:[];
+  state.salary=Number(state.salary)||0;
   state.notes=Array.isArray(state.notes)?state.notes:[];
   state.reminders=Array.isArray(state.reminders)?state.reminders:[];
-  state.invest=Object.assign({principal:0,rate:100,cdi:0,start:iso(today)},state.invest||{});
-  if(state.invest.cdi===undefined){state.invest.cdi=(Number(state.invest.rate)||0)*12;state.invest.rate=100;}
+
   var persistOk=true;
   function save(){try{localStorage.setItem(KEY,JSON.stringify(state));persistOk=true}catch(e){if(persistOk){toast('Não deu para salvar neste navegador. Seus dados valem só até fechar a página.')}persistOk=false}}
 
@@ -589,23 +583,12 @@ input[type="date"]{
   function inMonth(t,y,m){var d=pd(t.date);return d.getFullYear()===y&&d.getMonth()===m}
   function sums(y,m){var i=0,o=0;state.tx.forEach(function(t){if(inMonth(t,y,m)){if(t.type==='in')i+=t.amount;else o+=t.amount}});return {i:i,o:o}}
 
-  /* investment */
-  function invCalc(){
-    var iv=state.invest,P=iv.principal||0,pct=iv.rate||0,cdi=iv.cdi||0;
-    var annual=(cdi*pct/100)/100;
-    var r=Math.pow(1+annual,1/12)-1;
-    var m=Math.max(0,(today-pd(iv.start))/(30.4375*864e5));
-    var bal=P*Math.pow(1+r,m);
-    return {P:P,r:r,m:m,bal:bal,gain:bal-P,month:P*Math.pow(1+r,Math.floor(m))*r,annual:annual*100,pct:pct,cdi:cdi};
-  }
-
   function renderTiles(){
-    var s=sums(view.y,view.m),bal=s.i-s.o,c=invCalc();
+    var s=sums(view.y,view.m),bal=s.i-s.o;
     $('#tiles').innerHTML=
       '<div class="tile"><div class="k">Saldo do mês</div><div class="v num '+(bal<0?'neg':'')+'">'+brl.format(bal)+'</div><div class="s">Entradas menos saídas</div></div>'+
       '<div class="tile"><div class="k">Entradas</div><div class="v num in">'+brl.format(s.i)+'</div><div class="s">'+countType('in')+' lançamentos</div></div>'+
-      '<div class="tile"><div class="k">Saídas</div><div class="v num">'+brl.format(s.o)+'</div><div class="s">'+countType('out')+' lançamentos</div></div>'+
-      '<div class="tile"><div class="k">Rendimento do mês</div><div class="v num in">'+brl.format(c.month)+'</div><div class="s">Investido: '+brl.format(c.bal)+'</div></div>';
+      '<div class="tile"><div class="k">Saídas</div><div class="v num">'+brl.format(s.o)+'</div><div class="s">'+countType('out')+' lançamentos</div></div>';
   }
   function countType(t){return state.tx.filter(function(x){return x.type===t&&inMonth(x,view.y,view.m)}).length}
 
@@ -667,27 +650,6 @@ input[type="date"]{
     $('#byCat').innerHTML=group('cat');
   }
 
-  function renderYield(){
-    var c=invCalc(),iv=state.invest;
-    $('#ykv').innerHTML='<dt>Saldo estimado hoje</dt><dd class="big num">'+brl.format(c.bal)+'</dd><dt>Valor aplicado</dt><dd class="num">'+brl.format(c.P)+'</dd><dt>Rendimento acumulado</dt><dd class="num">'+brl.format(c.gain)+'</dd><dt>Rendimento estimado no mês</dt><dd class="num">'+brl.format(c.month)+'</dd><dt>Percentual do CDI</dt><dd class="num">'+String(c.pct).replace('.',',')+'%</dd><dt>Taxa anual equivalente</dt><dd class="num">'+String(c.annual.toFixed(2)).replace('.',',')+'%</dd>';
-    if(document.activeElement.id!=='yP'&&document.activeElement.id!=='yR'&&document.activeElement.id!=='yS'&&document.activeElement.id!=='yCDI'){
-      $('#yP').value=String(iv.principal).replace('.',',');$('#yR').value=String(iv.rate).replace('.',',');$('#yCDI').value=String(iv.cdi||'').replace('.',',');$('#yS').value=iv.start;
-    }
-    var pts=[];for(var k=0;k<=12;k++){pts.push(c.P*Math.pow(1+c.r,c.m+k))}
-    var lo=pts[0],hi=pts[12];if(hi-lo<1){hi=lo+1}
-    var svg=$('#ychart'),W=Math.max(280,Math.round(svg.getBoundingClientRect().width)||640),H=220,padL=12,padR=12,top=34,bot=34,iw=W-padL-padR,ih=H-top-bot;
-    var X=function(i){return padL+iw*i/12},Y=function(v){return top+ih-(v-lo)/(hi-lo)*ih};
-    var path=pts.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)}).join(' ');
-    var area=path+' L'+X(12).toFixed(1)+' '+(top+ih)+' L'+X(0).toFixed(1)+' '+(top+ih)+' Z';
-    var s='<line class="gl" x1="'+padL+'" x2="'+(W-padR)+'" y1="'+(top+ih)+'" y2="'+(top+ih)+'"/><line class="gl" x1="'+padL+'" x2="'+(W-padR)+'" y1="'+top+'" y2="'+top+'"/>';
-    s+='<path class="ar" d="'+area+'"/><path class="ln" d="'+path+'"/>';
-    s+='<circle class="dot" cx="'+X(0)+'" cy="'+Y(pts[0]).toFixed(1)+'" r="5"/><circle class="dot" cx="'+X(12)+'" cy="'+Y(pts[12]).toFixed(1)+'" r="5"/>';
-    s+='<text class="val" x="'+padL+'" y="'+(Y(pts[0])-12).toFixed(1)+'">'+brl.format(pts[0])+'</text>';
-    s+='<text class="val" x="'+(W-padR)+'" y="'+(Y(pts[12])-12).toFixed(1)+'" text-anchor="end">'+brl.format(pts[12])+'</text>';
-    s+='<text x="'+padL+'" y="'+(H-10)+'">hoje</text><text x="'+X(6)+'" y="'+(H-10)+'" text-anchor="middle">+6 meses</text><text x="'+(W-padR)+'" y="'+(H-10)+'" text-anchor="end">+12 meses</text>';
-    svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.innerHTML=s;
-  }
-
   function renderFlow(){
     var cols=[],max=1;
     for(var k=5;k>=0;k--){var d=new Date(view.y,view.m-k,1),s=sums(d.getFullYear(),d.getMonth());cols.push({d:d,i:s.i,o:s.o});max=Math.max(max,s.i,s.o)}
@@ -737,7 +699,7 @@ input[type="date"]{
     save();renderNotes();
   });
 
-  function renderAll(){renderMonth();renderDemo();renderTiles();renderSense();renderList();renderBreak();renderFixed();renderNotes();renderYield();renderFlow()}
+  function renderAll(){renderMonth();renderDemo();renderTiles();renderSense();renderList();renderBreak();renderFixed();renderNotes();renderFlow()}
 
   function syncFilters(){
     document.querySelectorAll('#filters .chip[data-m]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.m===F.m))});
@@ -839,14 +801,22 @@ input[type="date"]{
   function renderFixed(){
     var list=$('#fixedList'),items=state.fixedExpenses||[];
     var total=items.reduce(function(a,x){return a+(Number(x.amount)||0)},0);
-    var income=sums(view.y,view.m).i,pct=income>0?total/income*100:0;
+    var income=Number(state.salary)||0,pct=income>0?total/income*100:0;
     $('#fixedTotal').textContent=brl.format(total);
     $('#fixedPercent').textContent=pct.toFixed(1).replace('.',',')+'%';
+    $('#salaryDisplay').textContent=brl.format(income);$('#salaryFixedTotal').textContent=brl.format(total);$('#salaryAvailable').textContent=brl.format(income-total);$('#salaryCommitted').textContent=pct.toFixed(1).replace('.',',')+'%';
+    if(document.activeElement.id!=='salaryAmount')$('#salaryAmount').value=income?String(income).replace('.',','):'';
     if(!items.length){list.innerHTML='<li class="empty">Nenhum gasto fixo cadastrado. Adicione aluguel, internet, assinaturas e outras despesas recorrentes.</li>';return}
     list.innerHTML=items.map(function(x){
       return '<li class="fixed-item"><div><strong>'+esc(x.name)+'</strong><small>'+esc(x.category)+' · vence dia '+esc(x.due||'—')+'</small></div><div style="text-align:right"><div class="fixed-value">'+brl.format(x.amount)+'</div><button class="btn small danger" type="button" data-fixed-del="'+x.id+'">Remover</button></div></li>';
     }).join('');
   }
+  $('#salaryForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var amount=num($('#salaryAmount').value);
+    if(isNaN(amount)||amount<0){toast('Informe um salário válido.');return}
+    state.salary=Math.round(amount*100)/100;save();renderFixed();renderTiles();toast('Salário atualizado');
+  });
   $('#fixedForm').addEventListener('submit',function(e){
     e.preventDefault();
     var name=$('#fixedName').value.trim(),amount=num($('#fixedAmount').value),due=parseInt($('#fixedDue').value,10);
@@ -861,21 +831,13 @@ input[type="date"]{
     save();renderFixed();toast('Gasto fixo removido');
   });
 
-  /* yield form */
-  $('#yform').addEventListener('submit',function(e){
-    e.preventDefault();
-    var p=num($('#yP').value),r=num($('#yR').value),cdi=num($('#yCDI').value),s=$('#yS').value;
-    if(isNaN(p)||p<0||isNaN(r)||r<0||isNaN(cdi)||cdi<0||!s){toast('Confira valor, percentual do CDI, taxa anual e data.');return}
-    state.invest={principal:p,rate:r,cdi:cdi,start:s};save();renderAll();toast('Simulação CDI atualizada');
-  });
-
   $('#clearDemo').addEventListener('click',function(){
     state.tx=state.tx.filter(function(t){return !t.ex});
-    state.demo=false;state.budget=0;state.invest={principal:0,rate:100,cdi:0,start:iso(today)};
+    state.demo=false;state.budget=0;state.salary=0;
     save();renderAll();toast('Exemplos removidos. Agora é com você.');
   });
 
-  var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(renderYield,150)});
+
   syncFilters();renderAll();save();
 })();
 </script>
