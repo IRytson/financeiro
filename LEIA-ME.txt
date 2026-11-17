@@ -1,4 +1,4 @@
-TEIA FINANÇAS - app instalável no iPhone
+KONOHA FINANÇAS - app instalável no iPhone
 
 Conteúdo da pasta
 - index.html            o app
@@ -6,7 +6,7 @@ Conteúdo da pasta
 - sw.js                 faz o app abrir mesmo sem internet
 - icon-180.png          ícone da tela de início do iPhone
 - icon-192.png / icon-512.png / favicon-32.png   demais ícones
-- logo-teia-completa.png (fundo claro) e logo-teia-transparente.png   sua logo inteira, com o nome
+- konoha-financas-logo.png (fundo claro) e konoha-financas-logo.png   sua logo inteira, com o nome
 
 Como instalar no iPhone
 1. Coloque esta pasta em um site com endereço https (Vercel, Netlify, GitHub Pages ou Cloudflare Pages, todos têm plano grátis).

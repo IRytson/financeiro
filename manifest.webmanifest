@@ -1,7 +1,7 @@
 {
-  "name": "Teia Finanças",
-  "short_name": "Teia",
-  "description": "Controle financeiro com comprovantes de Pix, formas de pagamento, rendimento e alerta de limite.",
+  "name": "Konoha Finanças",
+  "short_name": "Konoha",
+  "description": "Seu controle financeiro ninja: salário, gastos fixos, metas e movimentações.",
   "lang": "pt-BR",
   "start_url": "./",
   "scope": "./",
