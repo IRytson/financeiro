@@ -323,7 +323,11 @@ h3.cap:first-of-type{margin-top:0}
 :root[data-palette="akatsuki"]{--bg:#101010;--surface:#1b1b1b;--surface-2:#292323;--line:#403333;--fg:#f7f3f3;--muted:#b6a5a5;--accent:#d92f38;--on-accent:#fff;--glow:rgba(217,47,56,.12);--c2:#ef5555;--c3:#777}
 :root[data-palette="hokage"]{--bg:#111713;--surface:#1b241e;--surface-2:#28352b;--line:#3a4a3d;--fg:#f3f7f0;--muted:#aab9aa;--accent:#c9a34a;--on-accent:#17130a;--glow:rgba(201,163,74,.12);--c2:#6b9b67;--c3:#9c8060}
 .naruto-banner{height:178px;border-radius:22px;margin:0 0 16px;overflow:hidden;position:relative;background:#171a20 url('naruto-header.png') center 35%/cover no-repeat;border:1px solid #343943;box-shadow:0 10px 28px rgba(0,0,0,.22)}
-.naruto-banner:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,13,18,.94) 0%,rgba(10,13,18,.68) 43%,rgba(10,13,18,.04) 100%)}
+.naruto-banner:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,13,18,.88) 0%,rgba(10,13,18,.55) 43%,rgba(10,13,18,.02) 100%)}
+:root[data-palette="naruto"] .naruto-banner{background-image:url("theme-naruto.webp")}
+:root[data-palette="sasuke"] .naruto-banner{background-image:url("theme-sasuke.webp")}
+:root[data-palette="akatsuki"] .naruto-banner{background-image:url("theme-itachi.webp")}
+:root[data-palette="hokage"] .naruto-banner{background-image:url("theme-minato.webp")}
 .banner-copy{position:absolute;z-index:1;left:24px;top:24px;display:flex;flex-direction:column;align-items:flex-start;text-shadow:0 2px 12px #000}
 .banner-konoha{font-size:25px;color:#ff8a18;line-height:1;margin-bottom:7px}
 .banner-copy strong{font-size:30px;letter-spacing:-1px;color:#fff}.banner-copy em{font-style:normal;color:#ff8514}.banner-copy small{font-size:13px;color:#f0e8e0;margin-top:3px}
@@ -338,7 +342,7 @@ h3.cap:first-of-type{margin-top:0}
 </style>
 
 <div class="app">
-  <section class="naruto-banner" aria-label="Tema Naruto"><div class="banner-copy"><span class="banner-konoha">忍</span><strong>Konoha <em>Finanças</em></strong><small>Seu controle financeiro ninja</small></div></section>
+  <section class="naruto-banner" id="themeBanner" aria-label="Tema Naruto"><div class="banner-copy"><span class="banner-konoha">忍</span><strong>Konoha <em>Finanças</em></strong><small id="bannerSubtitle">Naruto Uzumaki • Seu controle financeiro ninja</small></div></section>
   <header class="hd">
     <div class="brand">
       <img class="logo" src="konoha-financas-logo.png" alt="Logo Konoha Finanças" width="54" height="54">
@@ -622,8 +626,8 @@ h3.cap:first-of-type{margin-top:0}
   var CATS={out:['Alimentação','Moradia','Transporte','Lazer','Saúde','Assinaturas','Outros'],in:['Salário','Freelance','Rendimento','Outros']};
   var FCATS=['Moradia','Assinaturas','Saúde','Transporte','Educação','Outros'];
   var METHODS={pix:'Pix',cash:'Dinheiro',card:'Cartão'};
-  var PALS=[{id:'naruto',name:'Naruto',sw:['#191e26','#ff7900','#ff9b38']},{id:'sasuke',name:'Sasuke',sw:['#191d2a','#627eea','#e04b54']},{id:'akatsuki',name:'Akatsuki',sw:['#1b1b1b','#d92f38','#777777']},{id:'hokage',name:'Hokage',sw:['#1b241e','#c9a34a','#6b9b67']}];
-  function applyPal(id){if(!PALS.some(function(p){return p.id===id}))id='naruto';document.documentElement.setAttribute('data-palette',id);try{localStorage.setItem('teia-palette',id)}catch(e){}}
+  var PALS=[{id:'naruto',name:'Naruto',character:'Naruto Uzumaki',sw:['#191e26','#ff7900','#ff9b38']},{id:'sasuke',name:'Sasuke',character:'Sasuke Uchiha',sw:['#191d2a','#627eea','#e04b54']},{id:'akatsuki',name:'Akatsuki',character:'Itachi Uchiha',sw:['#1b1b1b','#d92f38','#777777']},{id:'hokage',name:'Hokage',character:'Minato Namikaze',sw:['#1b241e','#c9a34a','#6b9b67']}];
+  function applyPal(id){if(!PALS.some(function(p){return p.id===id}))id='naruto';document.documentElement.setAttribute('data-palette',id);var chosen=PALS.find(function(p){return p.id===id});var banner=document.getElementById('themeBanner');var subtitle=document.getElementById('bannerSubtitle');if(banner){banner.setAttribute('aria-label','Tema '+chosen.name+' — '+chosen.character)}if(subtitle){subtitle.textContent=chosen.character+' • Seu controle financeiro ninja'}try{localStorage.setItem('teia-palette',id)}catch(e){}}
   function loadPal(){try{return localStorage.getItem('teia-palette')||'naruto'}catch(e){return 'petroleo'}}
   var ICONS={
     pix:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l4 4-4 4-4-4z"/><path d="M12 13l4 4-4 4-4-4z"/><path d="M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg>',
@@ -1293,7 +1297,7 @@ h3.cap:first-of-type{margin-top:0}
   /* cores */
   function buildPal(){
     var cur=document.documentElement.getAttribute('data-palette')||'petroleo';
-    $('#palList').innerHTML=PALS.map(function(p){return '<button type="button" class="palbtn" data-pal="'+p.id+'" aria-pressed="'+(p.id===cur)+'"><span class="sw">'+p.sw.map(function(c){return '<i style="background:'+c+'"></i>'}).join('')+'</span>'+p.name+'</button>'}).join('');
+    $('#palList').innerHTML=PALS.map(function(p){return '<button type="button" class="palbtn" data-pal="'+p.id+'" aria-pressed="'+(p.id===cur)+'"><span class="sw">'+p.sw.map(function(c){return '<i style="background:'+c+'"></i>'}).join('')+'</span><strong>'+p.name+'</strong><small>'+p.character+'</small></button>'}).join('');
   }
   $('#palList').addEventListener('click',function(e){var b=e.target.closest('[data-pal]');if(!b)return;applyPal(b.dataset.pal);buildPal();var nb=$('.palbtn[data-pal="'+b.dataset.pal+'"]');if(nb)nb.focus()});
   $('#pickPal').addEventListener('click',function(e){buildPal();openSheet('col',e.currentTarget)});

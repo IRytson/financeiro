@@ -1,5 +1,5 @@
-const CACHE='konoha-financas-v7';
-const CORE=['./','./index.html','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./favicon-32.png','./konoha-financas-logo.png','./naruto-header.png'];
+const CACHE='konoha-financas-v8';
+const CORE=['./','./index.html','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./favicon-32.png','./konoha-financas-logo.png','./naruto-header.png','./theme-naruto.webp','./theme-sasuke.webp','./theme-itachi.webp','./theme-minato.webp'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET'||new URL(req.url).origin!==location.origin)return;event.respondWith(caches.match(req).then(cached=>{const network=fetch(req).then(response=>{if(response&&response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(req,copy));}return response;}).catch(()=>cached||caches.match('./index.html'));return cached||network;}));});
