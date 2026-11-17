@@ -1,22 +1,20 @@
-KONOHA FINANÇAS - app instalável no iPhone
+KONOHA FINANÇAS — PACOTE PARA PUBLICAÇÃO
 
-Conteúdo da pasta
-- index.html            o app
-- manifest.webmanifest  nome, cores e ícones do app
-- sw.js                 faz o app abrir mesmo sem internet
-- icon-180.png          ícone da tela de início do iPhone
-- icon-192.png / icon-512.png / favicon-32.png   demais ícones
-- konoha-financas-logo.png (fundo claro) e konoha-financas-logo.png   sua logo inteira, com o nome
+IMPORTANTE: esta pasta já contém os arquivos do site na raiz. Publique o CONTEÚDO desta pasta, não uma pasta-pai que deixe o index.html escondido em subpastas.
 
-Como instalar no iPhone
-1. Coloque esta pasta em um site com endereço https (Vercel, Netlify, GitHub Pages ou Cloudflare Pages, todos têm plano grátis).
-   O iPhone só instala o app, com ícone próprio e tela cheia, a partir de um endereço https.
-2. Abra o endereço no Safari do iPhone.
-3. Toque no botão Compartilhar (quadrado com seta para cima).
-4. Toque em "Adicionar à Tela de Início" e depois em "Adicionar".
+Arquivos essenciais:
+- index.html
+- manifest.webmanifest
+- sw.js
+- icon-180.png (ícone iPhone)
+- icon-192.png e icon-512.png (Android/PWA)
+- icon-maskable-512.png (ícone adaptável)
+- favicon-32.png
 
-Observações
-- Os lançamentos ficam salvos só no aparelho em que você usa o app. Não há sincronização entre iPhone e computador.
-- Se você apagar os dados do Safari, os lançamentos e comprovantes somem.
-- Os comprovantes são imagens reduzidas e guardadas no próprio aparelho. Muitas imagens podem encher o espaço que o navegador reserva.
-- O app não lê o valor do comprovante automaticamente.
+Para atualizar uma instalação existente:
+1. Publique/substitua todos os arquivos mantendo-os juntos na mesma pasta.
+2. Abra o site no Safari (iPhone) ou Chrome (Android) e atualize a página.
+3. Remova o atalho antigo da tela inicial e adicione novamente pelo menu Compartilhar/Adicionar à Tela de Início.
+4. No iPhone, a instalação do ícone personalizado deve ser feita pelo Safari; abrir no Chrome não cria o ícone PWA do iOS.
+
+O manifesto e os ícones usam caminhos relativos à pasta do aplicativo. O site precisa estar em HTTPS.
